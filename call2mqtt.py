@@ -11,7 +11,6 @@ from utils import *
 from gsmmodem.modem import GsmModem
 from gsmmodem.exceptions import InterruptedException
 
-
 MQTT_CLIENT_ID = f"{VOROTA_NAME}_SIM800L_SERVICE"
 
 client = None
@@ -34,12 +33,31 @@ def publish_message(topic, message):
 def handle_incoming_call(call):
 
     if call.ringCount == 1:
-        print("%s\tIncoming call from: number=%s, TON=%s, callerName=%s" % (get_time(), call.number, call.ton, call.callerName))
+        print("%s\tIncoming call from: number=%s, type=%s" % (get_time(), call.number, call.ton))
         publish_message(INCOMING_CALL_TOPIC_NAME, call.number)
 
-    elif call.ringCount >= 3:
-        print("%s\tHanging up call from %s." % (get_time(), call.number))
-        call.hangup()
+    elif call.ringCount >= 2:
+        if call.dtmfSupport:
+            print("%s\tAnswering call and playing some DTMF tones..." % get_time())
+            call.answer()
+            # Wait for a bit - some older modems struggle to send DTMF tone immediately after answering a call
+            time.sleep(2.0)
+            try:
+                call.sendDtmfTone('9515999955951')
+            except InterruptedException as e:
+                # Call was ended during playback
+                print('{0}\tDTMF playback interrupted: {1} ({2} Error {3})'.format(get_time(), e, e.cause.type, e.cause.code))
+            finally:
+                if call.answered:
+                    print("%s\tHanging up call." % get_time())
+                    call.hangup()
+        else:
+            print("%s\tModem has no DTMF support - hanging up call." % get_time())
+            call.hangup()
+
+#    elif call.ringCount >= 3:
+#        print("%s\tHanging up call from %s." % (get_time(), call.number))
+#        call.hangup()
 
 def run():
 
@@ -55,6 +73,7 @@ def run():
     modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=handle_incoming_call)
     modem.connect(MODEM_SIM_PIN)
 
+    print("%s\tThe SIM card phone number is: %s" % (get_time(), modem.ownNumber))
     print("%s\tWaiting for incoming calls..." % get_time())
 
     try:
@@ -66,6 +85,3 @@ def main():
     run()
 
 main()
-
-
-
