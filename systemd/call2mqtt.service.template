@@ -1,0 +1,19 @@
+[Unit]
+
+Description=${SERVICE_DESCRIPTION}
+After=network.target
+StartLimitIntervalSec=5
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=python3 -u ${SERVICE_APP}
+WorkingDirectory=${SERVICE_DIR}
+TimeoutSec=300
+StandardOutput=append:${SERVICE_DIR}/logs/stdout.log
+StandardError=append:${SERVICE_DIR}/logs/stderr.log
+
+[Install]
+WantedBy=multi-user.target
+

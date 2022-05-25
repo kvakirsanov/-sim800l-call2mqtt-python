@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export SERVICE_NAME="call2mqtt"
+export SERVICE_DESCRIPTION="Vorota SIM800L Module ${SERVICE_NAME} Service"
+export SERVICE_FILENAME="${SERVICE_NAME}.service"
+export SERVICE_APP="${SERVICE_NAME}.py"
+export SERVICE_DIR=$(realpath "${PWD}/../")
+
+
