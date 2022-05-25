@@ -1,6 +1,6 @@
 [Unit]
 
-Description=Vorota SIM800L Module call2mqtt Service
+Description=Vorota sim800l module call2mqtt service
 After=network.target
 StartLimitIntervalSec=5
 
