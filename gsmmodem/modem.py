@@ -1268,7 +1268,7 @@ class GsmModem(SerialComms):
             #print("CLIPLINE: %s" % clipLine)
             clipMatch = self.CLIP_REGEX.match(clipLine)
             if clipMatch:
-                callerNumber = '+' + clipMatch.group(1)
+                callerNumber = clipMatch.group(1)
                 ton = clipMatch.group(2)
                 #TODO: re-add support for this
                 callerName = None
