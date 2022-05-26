@@ -8,7 +8,7 @@ import logging
 import json
 from datetime import datetime
 from config import *
-from mqtt import *
+from paho.mqtt import client as mqtt_client
 from utils import *
 from gsmmodem.modem import GsmModem
 from gsmmodem.exceptions import InterruptedException
@@ -21,16 +21,34 @@ class Call2MQTT():
         self.modem_restart_count = 0
         self.mqtt_client_id = mqtt_client_id
 
-        self.mqtt_client = connect_mqtt(self.mqtt_client_id)
+        logging.basicConfig(format='%(asctime)s\t%(levelname)s: %(message)s', level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
+        self.log = logging.getLogger('call2mqtt')
+
+        self.mqtt_client = self.connect_mqtt(self.mqtt_client_id)
         self.mqtt_client.loop_start()
 
         self.publish_message(START_TOPIC_NAME, get_time())
 
-        logging.basicConfig(format='%(asctime)s\t%(levelname)s: %(message)s', level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
-        self.log = logging.getLogger('call2mqtt')
-
         return None
 
+
+    def connect_mqtt(self, mqtt_client_id):
+
+        def on_connect(client, userdata, flags, rc):
+            if rc != 0:
+                print("%s\tFailed to connect, return code '%d'" % (get_time(), rc))
+
+        broker = MQTT_BROKER_HOST
+        port = MQTT_BROKER_PORT
+
+        self.log.info("Init MQTT connection to '{0}:{1}' as client '{2}'...".format( broker, port, mqtt_client_id ))
+
+        client = mqtt_client.Client(mqtt_client_id)
+        client.username_pw_set(MQTT_BROKER_LOGIN, MQTT_BROKER_PASSWORD)
+        client.on_connect = on_connect
+        client.connect(broker, port)
+
+        return client
 
 
     def publish_message(self, topic, message):
@@ -45,13 +63,17 @@ class Call2MQTT():
 
         return result
 
+    def handle_incoming_sms(self, sms):
+        self.log.info(u'== SMS message received ==\nFrom: {0}\nTime: {1}\nMessage:\n{2}\n'.format(sms.number, sms.time, sms.text))
+        self.publish_message(INCOMING_SMS_TOPIC_NAME, json.dumps({ 'number': sms.number, 'time' : sms.time, 'text' : sms.text }))
 
 
     def handle_incoming_call(self, call):
 
         if call.ringCount == 1:
             self.log.info("Incoming call from: number={0}, type={1}".format( call.number, call.ton ))
-            self.publish_message(INCOMING_CALL_TOPIC_NAME, call.number)
+            json_call = {}
+            self.publish_message(INCOMING_CALL_TOPIC_NAME, json.dumps({ 'number': call.number, 'type': call.ton }))
             call.hangup()
         else:
             call.hangup()
@@ -66,7 +88,8 @@ class Call2MQTT():
 
             self.log.info("Init modem on port {0}, baudrate={1}...".format( MODEM_PORT, MODEM_BAUDRATE ))
 
-            modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call)
+            modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call, smsReceivedCallbackFunc=self.handle_incoming_sms)
+            modem.smsTextMode = False
             modem.connect(MODEM_SIM_PIN)
 
             self.log.info("Waiting for incoming calls ({0})...".format( modem_timeout_sec ))
@@ -93,10 +116,12 @@ class Call2MQTT():
 
 def main():
 
-    worker = Call2MQTT(MQTT_CLIENT_ID, log_level = logging.DEBUG);
-    modem_timeout_sec = 30;
+    worker = Call2MQTT(MQTT_CLIENT_ID, log_level = logging.INFO);
+    modem_timeout_sec = 300;
 
     while(True):
         worker.wait_incoming_call(modem_timeout_sec);
 
 main()
+
+
