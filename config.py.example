@@ -1,21 +1,25 @@
-################
-# MQTT Settings
-################
-
-MQTT_BROKER_HOST = "mqtt"
-MQTT_BROKER_PORT = 1883
-MQTT_BROKER_LOGIN = "mqtt_login"
-MQTT_BROKER_PASSWORD = "mqtt_password"
-
-INCOMING_CALL_TOPIC_NAME = "vorota_toktogula/sim800l/incoming_call"
-ERROR_TOPIC_NAME = "vorota_toktogula/sim800l/error"
-
 ##################
 # VOROTA Settings
 ##################
 
 VOROTA_NAME = "VOROTA_TOKTOGULA"
-VOROTA_STATE_READ_INTERVAL_SEC = 0.1
+
+################
+# MQTT Settings
+################
+
+MQTT_CLIENT_ID = f"{VOROTA_NAME}_SIM800L_SERVICE"
+
+MQTT_BROKER_HOST = "mqtt"
+MQTT_BROKER_PORT = 1883
+MQTT_BROKER_LOGIN = "login"
+MQTT_BROKER_PASSWORD = "password"
+
+INCOMING_CALL_TOPIC_NAME = "vorota_toktogula/sim800l/incoming_call"
+ERROR_TOPIC_NAME = "vorota_toktogula/sim800l/error"
+START_TOPIC_NAME = "vorota_toktogula/sim800l/start"
+RESTART_TOPIC_NAME = "vorota_toktogula/sim800l/restart_counter"
+
 
 ###################
 # SIM800L Settings
@@ -24,4 +28,12 @@ VOROTA_STATE_READ_INTERVAL_SEC = 0.1
 MODEM_PORT = "/dev/ttyUSB0"
 MODEM_BAUDRATE = 115200
 MODEM_SIM_PIN = None
+
+
+
+
+
+
+
+
 
