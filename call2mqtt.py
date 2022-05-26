@@ -32,14 +32,11 @@ class Call2MQTT():
         return None
 
 
+
     def publish_message(self, topic, message):
 
         result = self.mqtt_client.publish(topic, message)
         status = result[0]
-
-#        print("TOPIC: %s" % topic)
-#        print("MESSAGE: %s" % message)
-#        print("RESULT: %s" % result)
 
         try:
             self.log.info("Publish message '{0}' to topic '{1}', result={2}, status={3}".format( str(message), topic, str(result), ("SUCCESS" if status == 0 else "ERROR_" % status) ))
@@ -47,6 +44,7 @@ class Call2MQTT():
             pass
 
         return result
+
 
 
     def handle_incoming_call(self, call):
@@ -58,27 +56,6 @@ class Call2MQTT():
         else:
             call.hangup()
 
-#        if call.dtmfSupport:
-#            print("{0}\tAnswering call and playing some DTMF tones...".format( get_time() ))
-#            call.answer()
-#            # Wait for a bit - some older modems struggle to send DTMF tone immediately after answering a call
-#            time.sleep(2.0)
-#            try:
-#                call.sendDtmfTone('9515999955951')
-#            except InterruptedException as e:
-#                # Call was ended during playback
-#                print('{0}\tDTMF playback interrupted: {1} ({2} Error {3})'.format(get_time(), e, e.cause.type, e.cause.code))
-#            finally:
-#                if call.answered:
-##                    print("{0}\tHanging up call.".format( get_time() ))
-#                    call.hangup()
-#        else:
-#            print("{0}\tModem has no DTMF support - hanging up call." .format( get_time() ))
-#            call.hangup()
-
-#    elif call.ringCount >= 3:
-#        print("%s\tHanging up call from %s." % (get_time(), call.number))
-#        call.hangup()
 
 
     def wait_incoming_call(self, modem_timeout_sec = 60):
