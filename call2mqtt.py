@@ -2,6 +2,7 @@
 
 import sys
 import os
+import re
 import time
 import traceback
 import logging
@@ -69,12 +70,24 @@ class Call2MQTT():
         self.publish_message(INCOMING_SMS_TOPIC_NAME, json.dumps({ 'number': sms.number, 'time' : sms.time, 'text' : sms.text }))
 
 
+    def build_intl_phone_number(self, number, ton):
+
+        ret = number
+        m = re.match(r'^0(\d{3,3})(\d{6,6})$', str(number))
+
+        if str(ton) == "161" and m:
+            ret = "996" + m.group(1) + m.group(2)
+
+        return ret
+
+
     def handle_incoming_call(self, call):
 
         if call.ringCount == 1:
             self.log.info("Incoming call from: number={0}, type={1}".format( call.number, call.ton ))
             json_call = {}
-            self.publish_message(INCOMING_CALL_TOPIC_NAME, json.dumps({ 'number': call.number, 'type': call.ton }))
+            intl_phone_number = self.build_intl_phone_number(call.number, call.ton )
+            self.publish_message(INCOMING_CALL_TOPIC_NAME, json.dumps({ 'number_orig': call.number, 'type': call.ton, 'phone_number' : intl_phone_number }))
             call.hangup()
         else:
             call.hangup()
