@@ -14,6 +14,7 @@ from gsmmodem.modem import GsmModem
 from gsmmodem.exceptions import InterruptedException
 from traceback import print_exc
 
+
 class Call2MQTT():
 
     def __init__(self, mqtt_client_id, log_level = logging.INFO):
