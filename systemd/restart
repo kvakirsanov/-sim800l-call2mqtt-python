@@ -1,8 +1,0 @@
-#!/bin/bash
-
-. ./config
-
-sudo systemctl restart "$SERVICE_NAME"
-sudo systemctl status "$SERVICE_NAME"
-
-
