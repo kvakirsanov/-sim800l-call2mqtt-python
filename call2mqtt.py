@@ -36,7 +36,7 @@ class Call2MQTT():
 
         def on_connect(client, userdata, flags, rc):
             if rc != 0:
-                print("%s\tFailed to connect, return code '%d'" % (get_time(), rc))
+                self.log.info("Failed to connect, return code '%d'" % ( rc ))
 
         broker = MQTT_BROKER_HOST
         port = MQTT_BROKER_PORT
