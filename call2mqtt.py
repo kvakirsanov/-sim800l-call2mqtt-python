@@ -131,11 +131,14 @@ class Call2MQTT():
 
 def main():
 
-    worker = Call2MQTT(MQTT_CLIENT_ID, log_level = logging.INFO);
-    modem_timeout_sec = 300;
+    log_level = logging.INFO
+    if DEBUG:
+       log_level = logging.DEBUG
+
+    worker = Call2MQTT(MQTT_CLIENT_ID, log_level = log_level);
 
     while(True):
-        worker.wait_command(modem_timeout_sec);
+        worker.wait_command(MODEM_RESTART_TIMEOUT_SEC);
 
 main()
 
