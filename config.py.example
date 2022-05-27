@@ -1,23 +1,24 @@
 from utils import *
 
-##################
-# VOROTA Settings
-##################
+############
+# CALL2MQTT
+############
 
-VOROTA_NAME = "VOROTA_TOKTOGULA"
+SERVICE_NAME = "YOUR_SERVICE_NAME"
+DEBUG = True
 
 ################
 # MQTT Settings
 ################
 
-MQTT_CLIENT_ID = f"{VOROTA_NAME}_SIM800L_CALL2MQTT_SERVICE"
+MQTT_CLIENT_ID = f"{SERVICE_NAME}_SIM800L_CALL2MQTT_SERVICE"
 
 MQTT_BROKER_HOST = "mqtt"
 MQTT_BROKER_PORT = 1883
 MQTT_BROKER_LOGIN = "<!-- mqtt_login -->"
 MQTT_BROKER_PASSWORD = "<!-- mqtt_password -->"
 
-TOPIC_PREFIX = f"{to_lowercase(VOROTA_NAME)}/sim800l"
+TOPIC_PREFIX = f"{to_lowercase(SERVICE_NAME)}/sim800l"
 INCOMING_SMS_TOPIC_NAME = f"{TOPIC_PREFIX}/incoming_sms"
 INCOMING_CALL_TOPIC_NAME = f"{TOPIC_PREFIX}/incoming_call"
 ERROR_TOPIC_NAME = f"{TOPIC_PREFIX}/error"
@@ -33,11 +34,8 @@ MODEM_BAUDRATE = 115200
 MODEM_SIM_PIN = None
 MODEM_RESTART_TIMEOUT_SEC = 300
 
-############
-# CALL2MQTT
-############
 
-DEBUG = True
+
 
 
 
