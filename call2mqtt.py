@@ -25,7 +25,8 @@ class Call2MQTT():
         self.mqtt_client_id = mqtt_client_id
 
         logging.basicConfig(format='%(asctime)s\t%(levelname)s: %(message)s', level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
-        self.log = logging.getLogger('call2mqtt')
+
+        self.log = logging.getLogger(__class__.__name__)
 
         self.mqtt_client = self.connect_mqtt(self.mqtt_client_id)
         self.mqtt_client.loop_start()
