@@ -1,4 +1,5 @@
 config.py
+tools/
 __pycache__/
 logs/
 systemd/call2mqtt.service
