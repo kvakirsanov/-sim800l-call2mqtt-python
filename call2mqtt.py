@@ -20,6 +20,7 @@ class Call2MQTT():
 
     def __init__(self, mqtt_client_id, log_level = logging.INFO):
 
+        self.modem = None
         self.modem_restart_count = 0
         self.mqtt_client_id = mqtt_client_id
 
@@ -86,15 +87,13 @@ class Call2MQTT():
         if call.ringCount == 1:
             self.log.info("Incoming call from: number={0}, type={1}".format( call.number, call.ton ))
             json_call = {}
-            intl_phone_number = self.build_intl_phone_number(call.number, call.ton )
+            intl_phone_number = build_intl_phone_number( call.number, call.ton )
             self.publish_message(INCOMING_CALL_TOPIC_NAME, json.dumps({ 'number_orig': call.number, 'type': call.ton, 'phone_number' : intl_phone_number }))
-            call.hangup()
-        else:
-            call.hangup()
+
+        call.hangup()
 
 
-
-    def wait_incoming_call(self, modem_timeout_sec = 60):
+    def wait_command(self, modem_timeout_sec = 60):
 
         self.modem_restart_count+=1
 
@@ -105,6 +104,8 @@ class Call2MQTT():
             modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call, smsReceivedCallbackFunc=self.handle_incoming_sms)
             modem.smsTextMode = False
             modem.connect(MODEM_SIM_PIN)
+
+            self.modem = modem
 
             self.log.info("Waiting for incoming calls ({0})...".format( modem_timeout_sec ))
 
@@ -134,7 +135,7 @@ def main():
     modem_timeout_sec = 300;
 
     while(True):
-        worker.wait_incoming_call(modem_timeout_sec);
+        worker.wait_command(modem_timeout_sec);
 
 main()
 
