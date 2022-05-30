@@ -102,7 +102,8 @@ class Call2MQTT():
 
             self.log.info("Init modem on port {0}, baudrate={1}...".format( MODEM_PORT, MODEM_BAUDRATE ))
 
-            modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call, smsReceivedCallbackFunc=self.handle_incoming_sms)
+#            modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call, smsReceivedCallbackFunc=self.handle_incoming_sms)
+            modem = GsmModem(MODEM_PORT, MODEM_BAUDRATE, incomingCallCallbackFunc=self.handle_incoming_call)
             modem.smsTextMode = False
             modem.connect(MODEM_SIM_PIN)
 
