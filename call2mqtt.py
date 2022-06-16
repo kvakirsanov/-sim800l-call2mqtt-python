@@ -96,8 +96,6 @@ class Call2MQTT():
 
     def wait_command(self, modem_timeout_sec = 60):
 
-        self.modem_restart_count+=1
-
         try:
 
             self.log.info("Init modem on port {0}, baudrate={1}...".format( MODEM_PORT, MODEM_BAUDRATE ))
