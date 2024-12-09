@@ -1,3 +1,4 @@
+```markdown
 # Call2MQTT
 
 **Call2MQTT** is a Python-based tool that listens for incoming calls (and optionally SMS messages, if enabled) from a GSM modem and publishes corresponding events to an MQTT broker. This solution is useful for integrating telephony events into IoT platforms, home automation systems, notification services, or any environment that leverages MQTT as a communication layer.
@@ -77,7 +78,9 @@ This tool can be integrated into home automation systems (e.g., Home Assistant),
    - Insert a SIM card if necessary and ensure the PIN (if set) is available.
 
 ## Configuration
+
 A `config.py` file is expected to provide key configuration variables. For example:
+
 ```python
 # config.py example
 MQTT_BROKER_HOST = "mqtt.example.com"
@@ -99,14 +102,18 @@ ERROR_TOPIC_NAME = "telephony/error"
 
 DEBUG = False
 ```
+
 Adjust these values according to your environment.
 
 ## Usage
+
 1. **Run the Script:**
    ```bash
    ./call2mqtt.py
    ```
+   
    or
+   
    ```bash
    python3 call2mqtt.py
    ```
@@ -115,6 +122,7 @@ Adjust these values according to your environment.
    It's recommended to run this script as a service or under a supervisor (systemd, docker, pm2, etc.) to maintain continuous operation and handle restarts.
 
 ## Environment Variables and Configuration
+
 - **Modem Configuration:**
   - `MODEM_PORT`: The serial port where the GSM modem is connected (e.g. `/dev/ttyUSB0`).
   - `MODEM_BAUDRATE`: The baud rate to communicate with the modem (e.g. `115200`).
@@ -138,17 +146,18 @@ Adjust these values according to your environment.
   - `DEBUG`: Set `True` for debug-level logging.
 
 ## MQTT Topics
-- **`START_TOPIC_NAME`** (`telephony/service_start`):
-  Publishes the current timestamp when the service starts.
 
+- **`START_TOPIC_NAME`** (`telephony/service_start`):  
+  Publishes the current timestamp when the service starts.
+  
   **Example message:**
   ```json
   "2024-12-09 12:00:00"
   ```
 
-- **`INCOMING_CALL_TOPIC_NAME`** (`telephony/incoming_call`):
+- **`INCOMING_CALL_TOPIC_NAME`** (`telephony/incoming_call`):  
   Publishes details of an incoming call as JSON.
-
+  
   **Example message:**
   ```json
   {
@@ -158,9 +167,9 @@ Adjust these values according to your environment.
   }
   ```
 
-- **`INCOMING_SMS_TOPIC_NAME`** (`telephony/incoming_sms`): *(If SMS callback is enabled)*
+- **`INCOMING_SMS_TOPIC_NAME`** (`telephony/incoming_sms`): *(If SMS callback is enabled)*  
   Publishes details of an incoming SMS message.
-
+  
   **Example message:**
   ```json
   {
@@ -170,23 +179,25 @@ Adjust these values according to your environment.
   }
   ```
 
-- **`RESTART_TOPIC_NAME`** (`telephony/service_restart`):
+- **`RESTART_TOPIC_NAME`** (`telephony/service_restart`):  
   Published each time the modem handling loop restarts due to a timeout or interruption.
-
+  
   **Example message:**
   ```json
   1
   ```
+  (An integer incrementing with each restart)
 
-- **`ERROR_TOPIC_NAME`** (`telephony/error`):
+- **`ERROR_TOPIC_NAME`** (`telephony/error`):  
   Publishes error messages as strings to notify subscribers of issues.
-
+  
   **Example message:**
   ```json
   "Exception('Modem not responding')"
-  ```  
+  ```
 
 ## Logging
+
 Logs are printed to stdout. The logging level can be controlled through the `DEBUG` flag in `config.py`. The timestamp, log level, and message are included.
 
 Example Log Output:
@@ -196,9 +207,10 @@ Example Log Output:
 2024-12-09 12:00:00    INFO: Init modem on port /dev/ttyUSB0, baudrate=115200...
 2024-12-09 12:00:05    INFO: Waiting for incoming calls (60)...
 2024-12-09 12:05:00    INFO: Incoming call from: number=+1234567890, type=129
-```  
+```
 
 ## Error Handling and Restarts
+
 - If the modem throws an exception or a timeout occurs, the script:
   - Logs a warning.
   - Publishes an error message to `ERROR_TOPIC_NAME`.
@@ -208,33 +220,37 @@ Example Log Output:
 This ensures the tool is resilient and can recover from transient errors.
 
 ## Example Workflow
-1. **Service Start:**
+
+1. **Service Start:**  
    - Script starts and publishes the start timestamp to `telephony/service_start`.
 
-2. **Incoming Call:**
+2. **Incoming Call:**  
    - A call arrives on the modem.
    - The script captures the caller ID, logs it, and publishes a JSON message to `telephony/incoming_call`.
 
-3. **No Activity / Timeout:**
+3. **No Activity / Timeout:**  
    - If no incoming call or SMS is detected within `MODEM_RESTART_TIMEOUT_SEC`, the script triggers a restart.
    - `telephony/service_restart` topic gets a numeric increment to indicate the restart count.
 
-4. **Error Condition:**
+4. **Error Condition:**  
    - If the modem disconnects, fails to respond, or another exception occurs, the script logs the error and publishes it to `telephony/error`.
    - The script then attempts to reinitialize the modem and continue listening.
 
 ## Troubleshooting
-- **No MQTT Messages:**
+
+- **No MQTT Messages:**  
   Check that the `MQTT_BROKER_HOST`, `MQTT_BROKER_PORT`, and credentials are correct. Verify the MQTT broker is running and accessible.
-
-- **No Modem Response:**
+  
+- **No Modem Response:**  
   Ensure the correct `MODEM_PORT` is configured. Check that the modem is properly connected and not being used by another process.
-
-- **PIN Error:**
+  
+- **PIN Error:**  
   If your SIM is PIN-locked, ensure `MODEM_SIM_PIN` is set in `config.py`.
-
-- **Insufficient Permissions:**
+  
+- **Insufficient Permissions:**  
   On Linux, you may need to add your user to the `dialout` group or run with `sudo` to access the serial device.
 
 ## License
+
 This project is provided under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
+```
