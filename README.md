@@ -1,4 +1,3 @@
-```markdown
 # Call2MQTT
 
 **Call2MQTT** is a Python-based tool that listens for incoming calls (and optionally SMS messages, if enabled) from a GSM modem and publishes corresponding events to an MQTT broker. This solution is useful for integrating telephony events into IoT platforms, home automation systems, notification services, or any environment that leverages MQTT as a communication layer.
